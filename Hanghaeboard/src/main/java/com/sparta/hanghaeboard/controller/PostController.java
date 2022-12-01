@@ -14,29 +14,28 @@ public class PostController {
     private final PostService postService;
 
 
-    @PostMapping("/api/save")
+    @PostMapping("/api/posts")
     public PostResponseDto createPost(@RequestBody PostRequestDto requestDto) {
         return postService.createPost(requestDto);
     }
 
-    @GetMapping("/api/get")
+    @GetMapping("/api/posts")
     public List<PostResponseDto> getListPosts() {
         return postService.getListPosts();
     }
 
-    @GetMapping("/api/get/{id}")
+    @GetMapping("/api/posts/{id}")
     public PostResponseDto getPosts(@PathVariable Long id) {
         return postService.getPost(id);
     }
 
-    @PutMapping("/api/update/{id}")
+    @PutMapping("/api/posts/{id}")
     public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
         return postService.update(id, requestDto);
     }
 
-    @DeleteMapping("/api/delete/{id}")
+    @DeleteMapping("/api/posts/{id}")
     public Map<String,Object> deletePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
         return postService.deletePost(id, requestDto);
     }
-
 }
