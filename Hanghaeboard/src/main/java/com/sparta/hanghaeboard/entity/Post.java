@@ -13,29 +13,29 @@ import javax.persistence.*;
 
 public class Post extends Timestamped {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String username;
-
     @Column(nullable = false)
     private String content;
     @JsonIgnore
-    @Column(nullable = false)
+    @Column
     private String password;
-
-
     @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
+    private Long userId;
 
 
-    public Post(PostRequestDto requestDto) {
+    public Post(PostRequestDto requestDto, Long userId) {
         this.username = requestDto.getUsername();
         this.content = requestDto.getContent();
         this.title = requestDto.getTitle();
         this.password = requestDto.getPassword();
+        this.userId = userId;
     }
+
 
     public void update(PostRequestDto postRequestDto) {
         this.username = postRequestDto.getUsername();
@@ -44,4 +44,5 @@ public class Post extends Timestamped {
         this.password = postRequestDto.getPassword();
 
     }
+
 }

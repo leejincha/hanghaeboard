@@ -1,12 +1,11 @@
 package com.sparta.hanghaeboard.controller;
 
-import com.sparta.hanghaeboard.dto.DelResponseDto;
-import com.sparta.hanghaeboard.dto.PostRequestDto;
-import com.sparta.hanghaeboard.dto.PostResponseDto;
+import com.sparta.hanghaeboard.dto.*;
 import com.sparta.hanghaeboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -14,10 +13,9 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
-
     @PostMapping("/api/posts")
-    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto) {
-        return postService.createPost(requestDto);
+    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+        return postService.createPost(requestDto, request);
     }
 
     @GetMapping("/api/posts")
@@ -26,17 +24,17 @@ public class PostController {
     }
 
     @GetMapping("/api/posts/{id}")
-    public PostResponseDto getPosts(@PathVariable Long id) {
+    public PostResponseDto getPost(@PathVariable Long id) {
         return postService.getPost(id);
     }
 
     @PutMapping("/api/posts/{id}")
-    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
-        return postService.update(id, requestDto);
+    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+        return postService.update(id, requestDto, request);
     }
 
-    @DeleteMapping("/api/posts/{id}") // 반환타입을 새로 만든 DelResponseDto로 바꿔주어 봤다.
-    public DelResponseDto deleteMemo(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
-        return postService.deletePost(id, requestDto.getPassword());//그리고 매개값도 id와 비밀번호만 넣어주었다.
+    @DeleteMapping("/api/posts/{id}")
+    public DelResponseDto deleteMemo(@PathVariable Long id, HttpServletRequest request) {
+        return postService.deletePost(id, request);
     }
 }
