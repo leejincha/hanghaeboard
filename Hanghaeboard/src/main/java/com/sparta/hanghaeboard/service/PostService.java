@@ -1,6 +1,8 @@
 package com.sparta.hanghaeboard.service;
 
-import com.sparta.hanghaeboard.dto.*;
+import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.dto.PostRequestDto;
+import com.sparta.hanghaeboard.dto.PostResponseDto;
 import com.sparta.hanghaeboard.entity.Post;
 import com.sparta.hanghaeboard.entity.User;
 import com.sparta.hanghaeboard.jwt.JwtUtil;
@@ -8,6 +10,8 @@ import com.sparta.hanghaeboard.repository.PostRepository;
 import com.sparta.hanghaeboard.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,7 +49,7 @@ public class PostService {
             );
 
             // 요청받은 DTO 로 DB에 저장할 객체 만들기
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user.getId()));
+            Post post = postRepository.saveAndFlush(new Post(requestDto, user.getUsername()));
 
             return new PostResponseDto(post);
         } else {
@@ -96,7 +100,7 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            Post post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+            Post post = postRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
                     () -> new NullPointerException("해당 게시글은 존재하지 않습니다.")
             );
 
@@ -111,12 +115,10 @@ public class PostService {
 
     //postRepository.deleteById(id);
     @Transactional
-    public DelResponseDto deletePost(Long id, HttpServletRequest request) {
+    public ResponseEntity<MsgResponseDto> deletePost(Long id, HttpServletRequest request) {
         // Request에서 Token 가져오기
         String token = jwtUtil.resolveToken(request);
         Claims claims;
-
-        DelResponseDto result = new DelResponseDto();
 
         // 토큰이 있는 경우에만 게시글 삭제 가능
         if (token != null) {
@@ -133,17 +135,14 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            Post post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+            Post post = postRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
                     () -> new NullPointerException("해당 게시글은 존재하지 않습니다.")
             );
 
             postRepository.delete(post);
 
-            result.setResult("200 OK", "게시물이 삭제되었습니다.");
-            return result;
-        } else {
-            result.setResult("500 Internal Server Error", "게시글 작성자만 삭제할 수 있습니다.");
-            return result;
+            return ResponseEntity.ok(new MsgResponseDto("삭제 완료", HttpStatus.OK.value()));
         }
+        return ResponseEntity.ok(new MsgResponseDto("삭제 실패", HttpStatus.FAILED_DEPENDENCY.value()));
     }
 }

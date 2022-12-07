@@ -9,25 +9,22 @@ import com.sparta.hanghaeboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.util.Optional;
 
 @Service
-@Validated
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository; //의존성 주입 !
+    private final UserRepository userRepository; //의존성 주입
     private final JwtUtil jwtUtil;
 
     // ADMIN_TOKEN
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
-    public void signup(@Valid SignupRequestDto signupRequestDto) {
+    public void signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
 

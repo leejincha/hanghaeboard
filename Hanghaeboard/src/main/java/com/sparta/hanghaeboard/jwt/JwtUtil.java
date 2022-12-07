@@ -19,7 +19,7 @@ import java.util.Date;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
+@RequiredArgsConstructor//싱글톤을 생성할 때 쓰는 것
 public class JwtUtil {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";

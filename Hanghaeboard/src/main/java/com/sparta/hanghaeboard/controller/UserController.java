@@ -24,15 +24,14 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<MsgResponseDto> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
         userService.signup(signupRequestDto);
-        return ResponseEntity.ok(new MsgResponseDto("회원가입 완료", HttpStatus.OK.value()));
+        return ResponseEntity.ok(new MsgResponseDto("회원가입 성공", HttpStatus.OK.value()));
     }
 
 
     @ResponseBody
     @PostMapping("/login")
-    public ResponseEntity<MsgResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<MsgResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) { //Servlet은 HttpServletResponse객체에 Content Type, 응답코드, 응답 메시지등을 담아서 전송함
         userService.login(loginRequestDto, response);
-        return ResponseEntity.ok(new MsgResponseDto("로그인 완료",HttpStatus.OK.value()));
+        return ResponseEntity.ok(new MsgResponseDto("로그인 성공",HttpStatus.OK.value()));
     }
-
 }

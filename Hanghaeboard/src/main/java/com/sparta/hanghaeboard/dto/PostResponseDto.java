@@ -2,11 +2,12 @@ package com.sparta.hanghaeboard.dto;
 
 import com.sparta.hanghaeboard.entity.Post;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-
+@NoArgsConstructor
 public class PostResponseDto {
 
     private String username;
