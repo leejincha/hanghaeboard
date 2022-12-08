@@ -38,8 +38,10 @@
     
 ### 2. ERD 
 
+< 과제 1>
 <img src="./Lv1Erd.png" height="500px" width="400px"></img>
 
+<과제 2>
 <img src="./Lv2Erd.png" height="400px" width="800px"></img>
 
 
