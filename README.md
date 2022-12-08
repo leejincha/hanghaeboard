@@ -35,8 +35,15 @@
     
     
     
-### 2. ERD / API 명세서
+### 2. ERD 
 
-link : <https://www.notion.so/99-project-2-9f0ef789b4a84ef9bbc640f88e7a69ce>
+<img src="./Lv1Erd.png" height="500px" width="400px"></img>
+
+<img src="./Lv2Erd.png" height="400px" width="800px"></img>
+
+
+### 3. API 명세서
+
+link : <https://documenter.getpostman.com/view/24654559/2s8YzRxhor>
 
 
