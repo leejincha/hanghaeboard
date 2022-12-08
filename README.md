@@ -38,11 +38,11 @@
     
 ### 2. ERD 
 
-< 과제 1>
-<img src="./Lv1Erd.png" height="500px" width="400px"></img>
+<p>< 과제 1>
+<p><img src="./Lv1Erd.png" height="500px" width="400px"></img>
 
-<과제 2>
-<img src="./Lv2Erd.png" height="400px" width="800px"></img>
+<p><과제 2>
+<p><img src="./Lv2Erd.png" height="400px" width="800px"></img>
 
 
 ### 3. API 명세서
