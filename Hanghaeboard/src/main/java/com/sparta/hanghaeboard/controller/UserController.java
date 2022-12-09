@@ -24,7 +24,7 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<MsgResponseDto> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
         userService.signup(signupRequestDto);
-        return ResponseEntity.ok(new MsgResponseDto("회원가입 완료", HttpStatus.OK.value()));
+        return ResponseEntity.ok(new MsgResponseDto( HttpStatus.OK.value(),"회원가입 성공"));
     }
 
 
@@ -32,7 +32,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<MsgResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         userService.login(loginRequestDto, response);
-        return ResponseEntity.ok(new MsgResponseDto("로그인 완료",HttpStatus.OK.value()));
+        return ResponseEntity.ok(new MsgResponseDto(HttpStatus.OK.value(),"로그인 성공"));
     }
-
 }

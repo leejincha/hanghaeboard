@@ -1,8 +1,11 @@
 package com.sparta.hanghaeboard.controller;
 
-import com.sparta.hanghaeboard.dto.*;
+import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.dto.PostRequestDto;
+import com.sparta.hanghaeboard.dto.PostResponseDto;
 import com.sparta.hanghaeboard.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,11 +23,13 @@ public class PostController {
 
     @GetMapping("/api/posts")
     public List<PostResponseDto> getListPosts() {
+
         return postService.getListPosts();
     }
 
     @GetMapping("/api/posts/{id}")
     public PostResponseDto getPost(@PathVariable Long id) {
+
         return postService.getPost(id);
     }
 
@@ -34,7 +39,7 @@ public class PostController {
     }
 
     @DeleteMapping("/api/posts/{id}")
-    public DelResponseDto deleteMemo(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<MsgResponseDto> deleteMemo(@PathVariable Long id, HttpServletRequest request) {
         return postService.deletePost(id, request);
     }
 }

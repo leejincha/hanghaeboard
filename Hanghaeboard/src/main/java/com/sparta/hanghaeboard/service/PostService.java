@@ -1,23 +1,29 @@
 package com.sparta.hanghaeboard.service;
 
-import com.sparta.hanghaeboard.dto.*;
+import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.dto.PostRequestDto;
+import com.sparta.hanghaeboard.dto.PostResponseDto;
 import com.sparta.hanghaeboard.entity.Post;
 import com.sparta.hanghaeboard.entity.User;
+import com.sparta.hanghaeboard.entity.UserRoleEnum;
 import com.sparta.hanghaeboard.jwt.JwtUtil;
 import com.sparta.hanghaeboard.repository.PostRepository;
 import com.sparta.hanghaeboard.repository.UserRepository;
+import com.sparta.hanghaeboard.util.ErrorCode;
+import com.sparta.hanghaeboard.util.RequestException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor //final에 붙은 친구들 생성자로 주입해줌 @Bean 주입
 public class PostService {
 
     private final PostRepository postRepository;
@@ -25,7 +31,7 @@ public class PostService {
     private final JwtUtil jwtUtil;
 
 
-    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+    public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest request) {
         // Request에서 Token 가져오기
         String token = jwtUtil.resolveToken(request);
         Claims claims;
@@ -36,41 +42,37 @@ public class PostService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new RequestException(ErrorCode.유효하지_않은_토큰_400);
             }
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                    () -> new RequestException(ErrorCode.사용자가_존재하지_않습니다_400)
             );
 
             // 요청받은 DTO 로 DB에 저장할 객체 만들기
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user.getId()));
-
+            Post post = postRepository.saveAndFlush(new Post(requestDto, user.getUsername(), user));
             return new PostResponseDto(post);
         } else {
-            return null;
+            throw new RequestException(ErrorCode.유효하지_않은_토큰_400);
         }
     }
 
     @Transactional(readOnly = true)
     public List<PostResponseDto> getListPosts() {
-        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         List<PostResponseDto> postResponseDto = new ArrayList<>();
-        for (Post post : postList) { //postList 하나하나의 값을 for each문을 통해 돌려주면서
-            {
-                PostResponseDto postDto = new PostResponseDto(post); // PostResponseDto인 postDto에 담아주고
-                postResponseDto.add(postDto); //담긴 데이터를 .add() 를 통해 아까 만들어준 ArrayList<>에 넣어 준다.
-            }
+        for (Post post : postList) {
+                PostResponseDto postDto = new PostResponseDto(post);
+                postResponseDto.add(postDto);
         }
-        return postResponseDto; //그리고 그 ArrayList를 반환하면 전체 게시글을 볼 수 있다.
+        return postResponseDto;
     }
-
 
     @Transactional
     public PostResponseDto getPost(Long id) {
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
         return new PostResponseDto(post);
     }
@@ -88,35 +90,38 @@ public class PostService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new RequestException(ErrorCode.유효하지_않은_토큰_400);
             }
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                    () -> new RequestException(ErrorCode.사용자가_존재하지_않습니다_400)
             );
 
-            Post post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new NullPointerException("해당 게시글은 존재하지 않습니다.")
-            );
-
+            Post post;
+            //유저의 권한이 admin과 같으면 모든 데이터 수정 가능
+            if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+                post = postRepository.findById(id).orElseThrow(NullPointerException::new);
+            } else {
+                //유저의 권한이 admin이 아니면 아이디가 같은 유저만 수정 가능
+                post = postRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
+                        () -> new RequestException(ErrorCode.아이디가_일치하지_않습니다)
+                );
+            }
             post.update(requestDto);
 
             return new PostResponseDto(post);
-
         } else {
-            return null;
+            throw new RequestException(ErrorCode.유효하지_않은_토큰_400);
         }
     }
 
     //postRepository.deleteById(id);
     @Transactional
-    public DelResponseDto deletePost(Long id, HttpServletRequest request) {
+    public ResponseEntity<MsgResponseDto> deletePost(Long id, HttpServletRequest request) {
         // Request에서 Token 가져오기
         String token = jwtUtil.resolveToken(request);
         Claims claims;
-
-        DelResponseDto result = new DelResponseDto();
 
         // 토큰이 있는 경우에만 게시글 삭제 가능
         if (token != null) {
@@ -125,25 +130,30 @@ public class PostService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new RequestException(ErrorCode.유효하지_않은_토큰_400);
             }
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                    () -> new RequestException(ErrorCode.사용자가_존재하지_않습니다_400)
             );
 
-            Post post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new NullPointerException("해당 게시글은 존재하지 않습니다.")
-            );
+            Post post;
+            //유저의 권한이 admin과 같으면 모든 데이터 삭제 가능
+            if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+                post = postRepository.findById(id).orElseThrow(NullPointerException::new);
+            } else {
+                //유저의 권한이 admin이 아니면 아이디가 같은 유저만 삭제 가능
+                post = postRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
+                        () -> new RequestException(ErrorCode.아이디가_일치하지_않습니다)
+                );
+            }
 
             postRepository.delete(post);
 
-            result.setResult("200 OK", "게시물이 삭제되었습니다.");
-            return result;
-        } else {
-            result.setResult("500 Internal Server Error", "게시글 작성자만 삭제할 수 있습니다.");
-            return result;
+            return ResponseEntity.ok(new MsgResponseDto(HttpStatus.OK.value(),"게시글 삭제 성공"));
+        }else{
+            throw new RequestException(ErrorCode.유효하지_않은_토큰_400);
         }
     }
 }

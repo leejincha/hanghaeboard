@@ -1,48 +1,47 @@
 package com.sparta.hanghaeboard.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.hanghaeboard.dto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor
-
 public class Post extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
+    @Column(length = 225, nullable = false)
     private String username;
     @Column(nullable = false)
     private String content;
-    @JsonIgnore
-    @Column
-    private String password;
+
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
-    private Long userId;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Post(PostRequestDto requestDto, Long userId) {
-        this.username = requestDto.getUsername();
+    @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)// 글 하나가 삭제되면 맵핑되어있는 쪽 테이블이름!!! 글도 삭제되는 cascade 연속성 전이 속성
+    @OrderBy("createdAt desc")// 엔티티단에서 정렬
+    private List<Comment> commentList = new ArrayList<>();
+
+    public Post(PostRequestDto requestDto, String username, User user) {
+        this.username = username;
         this.content = requestDto.getContent();
         this.title = requestDto.getTitle();
-        this.password = requestDto.getPassword();
-        this.userId = userId;
-    }
-
-
-    public void update(PostRequestDto postRequestDto) {
-        this.username = postRequestDto.getUsername();
-        this.content = postRequestDto.getContent();
-        this.title = postRequestDto.getTitle();
-        this.password = postRequestDto.getPassword();
+        this.user = user;
 
     }
 
+    public void update(PostRequestDto requestDto) {
+        this.content = requestDto.getContent();
+        this.title = requestDto.getTitle();
+    }
 }

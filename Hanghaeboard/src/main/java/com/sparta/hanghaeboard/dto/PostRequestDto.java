@@ -1,20 +1,14 @@
 package com.sparta.hanghaeboard.dto;
 
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class PostRequestDto {
 
-    private String username;
     private String content;
     private String title;
-    private String password;
-    private Long id;
-    private String role;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
 
 }
 
