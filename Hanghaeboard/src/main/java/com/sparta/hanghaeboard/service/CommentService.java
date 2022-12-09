@@ -49,10 +49,10 @@ public class CommentService {
             );
 
             Comment comments = Comment.builder()
-                    .id(commentDto.getCommentId())
                     .post(post)
                     .username(user.getUsername())
                     .comment(commentDto.getComment())
+                    .user(user)
                     .build();
 
             commentRepository.save(comments);
@@ -78,15 +78,15 @@ public class CommentService {
             }
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new RequestException(ErrorCode.중복_사용자_존재_400)
+                    () -> new RequestException(ErrorCode.사용자가_존재하지_않습니다_400)
             );
 
             Comment comment;
             //유저의 권한이 admin과 같으면 모든 데이터 수정 가능
             if(user.getRole().equals(UserRoleEnum.ADMIN)){
-                comment = commentRepository.findById(id).orElseThrow(NullPointerException::new);
+                comment = commentRepository.findById(commentId).orElseThrow(NullPointerException::new);
             }else {
-                comment = commentRepository.findById(commentId).orElseThrow(
+                comment = commentRepository.findByIdAndUserId(commentId, user.getId()).orElseThrow(
                         () -> new RequestException(ErrorCode.COMMON_BAD_REQUEST_400)
                 );
             }
@@ -119,9 +119,9 @@ public class CommentService {
             Comment comment;
             //유저의 권한이 admin과 같으면 모든 데이터 삭제 가능
             if (user.getRole().equals(UserRoleEnum.ADMIN)) {
-                comment = commentRepository.findById(id).orElseThrow(NullPointerException::new);
+                comment = commentRepository.findById(commentId).orElseThrow(NullPointerException::new);
             } else {
-                comment = commentRepository.findById(commentId).orElseThrow(
+                comment = commentRepository.findByIdAndUserId(commentId, user.getId()).orElseThrow(
                         () -> new RequestException(ErrorCode.COMMON_BAD_REQUEST_400)
                 );
             }

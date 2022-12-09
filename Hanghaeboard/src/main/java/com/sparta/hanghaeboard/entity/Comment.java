@@ -26,14 +26,13 @@ public class Comment extends Timestamped{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POST_ID", nullable = false)
     private Post post;
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name ="user_id")
     private User user;
 
     @Builder
-    public Comment(Long id, String username, String comment, Post post, User user) {
-        this.id = id;
+    public Comment(String username, String comment, Post post, User user) {
         this.username = username;
         this.comment = comment;
         this.post = post;
