@@ -1,13 +1,14 @@
 package com.sparta.hanghaeboard.controller;
 
 import com.sparta.hanghaeboard.dto.CommentDto;
+import com.sparta.hanghaeboard.dto.CommentRequestDto;
 import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.security.UserDetailsImpl;
 import com.sparta.hanghaeboard.service.CommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,19 +18,18 @@ public class CommentController {
 
     //댓글 작성
     @PostMapping("/api/comment/{id}")
-    public CommentDto addComment(@PathVariable Long id, @RequestBody CommentDto commentDto, HttpServletRequest request) {
+    public CommentDto addComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // 응답 보내기
-        return commentService.addComment(commentDto, id, request);
+        return commentService.addComment(id, commentRequestDto, userDetails.getUser());
     }
 
     @PutMapping("/api/comment/{id}/{commentId}")
-    public CommentDto updateComment(@PathVariable Long id,@PathVariable Long commentId, @RequestBody CommentDto commentDto, HttpServletRequest request) {
-        return commentService.updateComment(id, commentId, commentDto, request);
+    public CommentDto updateComment(@PathVariable Long id,@PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return commentService.updateComment(id, commentId, commentRequestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/api/comment/{id}/{commentId}")
-    public MsgResponseDto deleteComment(@PathVariable Long id, @PathVariable Long commentId, HttpServletRequest request) {
-        commentService.deleteComment(id, commentId, request);
-        return new MsgResponseDto(HttpStatus.OK.value(), "댓글 삭제 성공");
+    public ResponseEntity<MsgResponseDto> deleteComment(@PathVariable Long id, @PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return commentService.deleteComment(id, commentId, userDetails.getUser());
     }
 }

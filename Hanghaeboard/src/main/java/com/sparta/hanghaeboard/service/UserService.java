@@ -58,7 +58,7 @@ public class UserService {
 
         // 사용자 확인
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new RequestException(ErrorCode.아이디가_일치하지_않습니다)
+                () -> new RequestException(ErrorCode.회원을_찾을_수_없습니다_400)
         );
         // 비밀번호 확인
         if(!passwordEncoder.matches(password,user.getPassword())){

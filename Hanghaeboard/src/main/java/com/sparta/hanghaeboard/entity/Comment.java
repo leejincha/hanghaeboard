@@ -1,7 +1,7 @@
 package com.sparta.hanghaeboard.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sparta.hanghaeboard.dto.CommentDto;
+import com.sparta.hanghaeboard.dto.CommentRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,15 +32,15 @@ public class Comment extends Timestamped{
     private User user;
 
     @Builder
-    public Comment(String username, String comment, Post post, User user) {
-        this.username = username;
-        this.comment = comment;
+    public Comment(CommentRequestDto commentRequestDto, Post post, User user) {
+        this.comment = commentRequestDto.getComment();
+        this.username = user.getUsername();
         this.post = post;
         this.user = user;
     }
 
 
-    public void update(CommentDto commentDto){
-        this.comment = commentDto.getComment();
+    public void update(CommentRequestDto commentRequestDto){
+        this.comment = commentRequestDto.getComment();
     }
 }

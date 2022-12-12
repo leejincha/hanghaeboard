@@ -57,7 +57,7 @@ public class PostService {
             } else {
                 //유저의 권한이 admin이 아니면 아이디가 같은 유저만 수정 가능
                 post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new RequestException(ErrorCode.아이디가_일치하지_않습니다)
+                        () -> new RequestException(ErrorCode.작성자만_수정할_수_있습니다_400)
                 );
             }
             post.update(requestDto);
@@ -75,7 +75,7 @@ public class PostService {
             } else {
                 //유저의 권한이 admin이 아니면 아이디가 같은 유저만 삭제 가능
                 post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new RequestException(ErrorCode.아이디가_일치하지_않습니다)
+                        () -> new RequestException(ErrorCode.작성자만_삭제할_수_있습니다_400)
                 );
             }
             postRepository.delete(post);
