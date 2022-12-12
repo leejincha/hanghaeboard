@@ -59,7 +59,6 @@ public class CommentService {
 
             return new CommentDto(comments);
         }else {
-            /*return new ResponseMsgDto(HttpStatus.OK.value(), "실패");*/
             throw new RequestException(ErrorCode.유효하지_않은_토큰_400);
         }
     }

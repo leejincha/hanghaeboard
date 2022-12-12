@@ -9,6 +9,7 @@ import com.sparta.hanghaeboard.repository.UserRepository;
 import com.sparta.hanghaeboard.util.ErrorCode;
 import com.sparta.hanghaeboard.util.RequestException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
@@ -28,7 +30,7 @@ public class UserService {
     @Transactional
     public void signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
-        String password = signupRequestDto.getPassword();
+        String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
         // 회원 중복 확인
         Optional<User> found = userRepository.findByUsername(username);
@@ -59,7 +61,7 @@ public class UserService {
                 () -> new RequestException(ErrorCode.아이디가_일치하지_않습니다)
         );
         // 비밀번호 확인
-        if(!user.getPassword().equals(password)){
+        if(!passwordEncoder.matches(password,user.getPassword())){
             throw  new RequestException(ErrorCode.비밀번호가_일치하지_않습니다_400);
         }
 

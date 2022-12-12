@@ -1,6 +1,8 @@
 package com.sparta.hanghaeboard.controller;
 
-import com.sparta.hanghaeboard.dto.*;
+import com.sparta.hanghaeboard.dto.LoginRequestDto;
+import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.dto.SignupRequestDto;
 import com.sparta.hanghaeboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
