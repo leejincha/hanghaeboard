@@ -29,7 +29,6 @@ public class User {
     private List<Post> post;
 
 
-
     public User(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
