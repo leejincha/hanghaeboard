@@ -1,6 +1,5 @@
 package com.sparta.hanghaeboard.dto;
 
-import com.sparta.hanghaeboard.entity.Comment;
 import com.sparta.hanghaeboard.entity.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +17,8 @@ public class PostResponseDto {
     private String title;
     private LocalDateTime modifiedAt;
     private LocalDateTime createdAt;
-    private List<Comment> commentList = new ArrayList<>();
+    private int postLikesCount;
+    private List<CommentDto> commentList = new ArrayList<>();
 
 
     public PostResponseDto(Post post) {
@@ -27,8 +27,18 @@ public class PostResponseDto {
         this.content = post.getContent();
         this.title = post.getTitle();
         this.createdAt = post.getCreatedAt();
-        this. modifiedAt = post.getModifiedAt();
-        this.commentList = post.getCommentList();
+        this.modifiedAt = post.getModifiedAt();
+        this.postLikesCount = post.getPostLikes().size();
+    }
 
+    public PostResponseDto(Post post, List<CommentDto> commentList) {
+        this.id = post.getId();
+        this.username = post.getUsername();
+        this.content = post.getContent();
+        this.title = post.getTitle();
+        this.createdAt = post.getCreatedAt();
+        this.modifiedAt = post.getModifiedAt();
+        this.commentList = commentList;
+        this.postLikesCount = post.getPostLikes().size();
     }
 }

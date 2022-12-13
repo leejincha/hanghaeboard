@@ -32,6 +32,9 @@ public class Post extends Timestamped {
     @OrderBy("createdAt desc")// 엔티티단에서 정렬
     private List<Comment> commentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post")
+    private List<PostLike> postLikes = new ArrayList<>();
+
     public Post(PostRequestDto requestDto, User user) {
         this.username = user.getUsername();
         this.content = requestDto.getContent();

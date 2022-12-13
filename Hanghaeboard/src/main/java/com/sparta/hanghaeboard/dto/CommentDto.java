@@ -15,6 +15,7 @@ public class CommentDto {
     private String comment;
     private LocalDateTime modifiedAt;
     private LocalDateTime createdAt;
+    private int commentLikesCount;
 
 
     public CommentDto(Comment comment) {
@@ -24,5 +25,6 @@ public class CommentDto {
         this.comment = comment.getComment();
         this.createdAt = comment.getCreatedAt();
         this. modifiedAt = comment.getModifiedAt();
+        this.commentLikesCount = comment.getCommentLikes().size();
     }
 }

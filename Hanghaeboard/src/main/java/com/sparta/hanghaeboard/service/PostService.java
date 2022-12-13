@@ -1,8 +1,10 @@
 package com.sparta.hanghaeboard.service;
 
+import com.sparta.hanghaeboard.dto.CommentDto;
 import com.sparta.hanghaeboard.dto.MsgResponseDto;
 import com.sparta.hanghaeboard.dto.PostRequestDto;
 import com.sparta.hanghaeboard.dto.PostResponseDto;
+import com.sparta.hanghaeboard.entity.Comment;
 import com.sparta.hanghaeboard.entity.Post;
 import com.sparta.hanghaeboard.entity.User;
 import com.sparta.hanghaeboard.entity.UserRoleEnum;
@@ -33,8 +35,12 @@ public class PostService {
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         List<PostResponseDto> postResponseDto = new ArrayList<>();
         for (Post post : postList) {
-                PostResponseDto postDto = new PostResponseDto(post);
-                postResponseDto.add(postDto);
+            List<CommentDto> commentList = new ArrayList<>();
+            for (Comment comment : post.getCommentList()) {
+                commentList.add(new CommentDto(comment));
+            }
+            PostResponseDto postDto = new PostResponseDto(post, commentList);
+            postResponseDto.add(postDto);
         }
         return postResponseDto;
     }
@@ -44,42 +50,46 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new RequestException(ErrorCode.게시글이_존재하지_않습니다_400)
         );
-        return new PostResponseDto(post);
+        List<CommentDto> commentList = new ArrayList<>();
+        for (Comment comment : post.getCommentList()) {
+            commentList.add(new CommentDto(comment));
+        }
+        return new PostResponseDto(post, commentList);
     }
 
     @Transactional
     public PostResponseDto update(Long id, PostRequestDto requestDto, User user) {
-            Post post;
-            //유저의 권한이 admin과 같으면 모든 데이터 수정 가능
-            if (user.getRole().equals(UserRoleEnum.ADMIN)) {
-                post = postRepository.findById(id).orElseThrow(
-                        ()->new RequestException(ErrorCode.게시글이_존재하지_않습니다_400));
-            } else {
-                //유저의 권한이 admin이 아니면 아이디가 같은 유저만 수정 가능
-                post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new RequestException(ErrorCode.작성자만_수정할_수_있습니다_400)
-                );
-            }
-            post.update(requestDto);
+        Post post;
+        //유저의 권한이 admin과 같으면 모든 데이터 수정 가능
+        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+            post = postRepository.findById(id).orElseThrow(
+                    () -> new RequestException(ErrorCode.게시글이_존재하지_않습니다_400));
+        } else {
+            //유저의 권한이 admin이 아니면 아이디가 같은 유저만 수정 가능
+            post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new RequestException(ErrorCode.작성자만_수정할_수_있습니다_400)
+            );
+        }
+        post.update(requestDto);
 
-            return new PostResponseDto(post);
+        return new PostResponseDto(post);
     }
 
     @Transactional
     public ResponseEntity<MsgResponseDto> deletePost(Long id, User user) {
-            Post post;
-            //유저의 권한이 admin과 같으면 모든 데이터 삭제 가능
-            if (user.getRole().equals(UserRoleEnum.ADMIN)) {
-                post = postRepository.findById(id).orElseThrow(
-                        ()->new RequestException(ErrorCode.게시글이_존재하지_않습니다_400));
-            } else {
-                //유저의 권한이 admin이 아니면 아이디가 같은 유저만 삭제 가능
-                post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new RequestException(ErrorCode.작성자만_삭제할_수_있습니다_400)
-                );
-            }
-            postRepository.delete(post);
-
-            return ResponseEntity.ok(new MsgResponseDto(HttpStatus.OK.value(),"게시글 삭제 성공"));
+        Post post;
+        //유저의 권한이 admin과 같으면 모든 데이터 삭제 가능
+        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+            post = postRepository.findById(id).orElseThrow(
+                    () -> new RequestException(ErrorCode.게시글이_존재하지_않습니다_400));
+        } else {
+            //유저의 권한이 admin이 아니면 아이디가 같은 유저만 삭제 가능
+            post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new RequestException(ErrorCode.작성자만_삭제할_수_있습니다_400)
+            );
         }
+        postRepository.delete(post);
+
+        return ResponseEntity.ok(new MsgResponseDto(HttpStatus.OK.value(), "게시글 삭제 성공"));
+    }
 }
