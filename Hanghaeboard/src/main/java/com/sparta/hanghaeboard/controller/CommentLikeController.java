@@ -1,6 +1,6 @@
 package com.sparta.hanghaeboard.controller;
 
-import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import com.sparta.hanghaeboard.security.UserDetailsImpl;
 import com.sparta.hanghaeboard.service.CommentLikeService;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +15,8 @@ public class CommentLikeController {
 
     private final CommentLikeService commentLikeService;
 
-    @PostMapping("/api/commentlikes/{id}")
-    public MsgResponseDto commentLike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @PostMapping("/api/comment-likes/{id}")
+    public StatusCodeDto commentLike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentLikeService.commentLike(id, userDetails.getUser());
     }
 }

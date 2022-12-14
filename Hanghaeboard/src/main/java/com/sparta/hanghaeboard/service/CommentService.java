@@ -1,8 +1,8 @@
 package com.sparta.hanghaeboard.service;
 
-import com.sparta.hanghaeboard.dto.CommentDto;
+import com.sparta.hanghaeboard.dto.CommentResponseDto;
 import com.sparta.hanghaeboard.dto.CommentRequestDto;
-import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import com.sparta.hanghaeboard.entity.Comment;
 import com.sparta.hanghaeboard.entity.Post;
 import com.sparta.hanghaeboard.entity.User;
@@ -24,7 +24,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
-    public CommentDto addComment(Long id, CommentRequestDto commentRequestDto, User user) {
+    public CommentResponseDto addComment(Long id, CommentRequestDto commentRequestDto, User user) {
 
         // 게시글의 DB 저장 유무 확인
         Post post = postRepository.findById(id).orElseThrow(
@@ -35,12 +35,12 @@ public class CommentService {
 
         commentRepository.save(comment);
 
-        return new CommentDto(comment);
+        return new CommentResponseDto(comment);
 
     }
 
     @Transactional
-    public CommentDto updateComment(Long id, Long commentId, CommentRequestDto commentRequestDto, User user) {
+    public CommentResponseDto updateComment(Long id, Long commentId, CommentRequestDto commentRequestDto, User user) {
         // 게시글의 DB 저장 유무 확인
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new RequestException(ErrorCode.게시글이_존재하지_않습니다_400)
@@ -61,11 +61,11 @@ public class CommentService {
         // 요청 받은 DTO로 DB에 업데이트
         comment.update(commentRequestDto);
 
-        return new CommentDto(comment);
+        return new CommentResponseDto(comment);
 
     }
 
-    public ResponseEntity<MsgResponseDto> deleteComment(Long id, Long commentId, User user) {
+    public ResponseEntity<StatusCodeDto> deleteComment(Long id, Long commentId, User user) {
         // 게시글의 DB 저장 유무 확인
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new RequestException(ErrorCode.게시글이_존재하지_않습니다_400)
@@ -84,7 +84,7 @@ public class CommentService {
 
         commentRepository.delete(comment);
 
-        return ResponseEntity.ok(new MsgResponseDto(HttpStatus.OK.value(),"댓글 삭제 성공"));
+        return ResponseEntity.ok(new StatusCodeDto(HttpStatus.OK.value(),"댓글 삭제 성공"));
     }
 }
 

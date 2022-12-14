@@ -1,7 +1,7 @@
 package com.sparta.hanghaeboard.controller;
 
 import com.sparta.hanghaeboard.dto.LoginRequestDto;
-import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import com.sparta.hanghaeboard.dto.SignupRequestDto;
 import com.sparta.hanghaeboard.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +24,16 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<MsgResponseDto> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+    public ResponseEntity<StatusCodeDto> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
         userService.signup(signupRequestDto);
-        return ResponseEntity.ok(new MsgResponseDto( HttpStatus.OK.value(),"회원가입 성공"));
+        return ResponseEntity.ok(new StatusCodeDto( HttpStatus.OK.value(),"회원가입 성공"));
     }
 
 
     @ResponseBody
     @PostMapping("/login")
-    public ResponseEntity<MsgResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<StatusCodeDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         userService.login(loginRequestDto, response);
-        return ResponseEntity.ok(new MsgResponseDto(HttpStatus.OK.value(),"로그인 성공"));
+        return ResponseEntity.ok(new StatusCodeDto(HttpStatus.OK.value(),"로그인 성공"));
     }
 }

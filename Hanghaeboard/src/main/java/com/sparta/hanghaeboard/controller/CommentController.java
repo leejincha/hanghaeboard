@@ -1,8 +1,8 @@
 package com.sparta.hanghaeboard.controller;
 
-import com.sparta.hanghaeboard.dto.CommentDto;
+import com.sparta.hanghaeboard.dto.CommentResponseDto;
 import com.sparta.hanghaeboard.dto.CommentRequestDto;
-import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import com.sparta.hanghaeboard.security.UserDetailsImpl;
 import com.sparta.hanghaeboard.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -18,18 +18,18 @@ public class CommentController {
 
     //댓글 작성
     @PostMapping("/api/comment/{id}")
-    public CommentDto addComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public CommentResponseDto addComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // 응답 보내기
         return commentService.addComment(id, commentRequestDto, userDetails.getUser());
     }
 
     @PutMapping("/api/comment/{id}/{commentId}")
-    public CommentDto updateComment(@PathVariable Long id,@PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public CommentResponseDto updateComment(@PathVariable Long id, @PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.updateComment(id, commentId, commentRequestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/api/comment/{id}/{commentId}")
-    public ResponseEntity<MsgResponseDto> deleteComment(@PathVariable Long id, @PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<StatusCodeDto> deleteComment(@PathVariable Long id, @PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.deleteComment(id, commentId, userDetails.getUser());
     }
 }

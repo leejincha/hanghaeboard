@@ -1,8 +1,8 @@
 package com.sparta.hanghaeboard.controller;
 
-import com.sparta.hanghaeboard.dto.MsgResponseDto;
 import com.sparta.hanghaeboard.dto.PostRequestDto;
 import com.sparta.hanghaeboard.dto.PostResponseDto;
+import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import com.sparta.hanghaeboard.security.UserDetailsImpl;
 import com.sparta.hanghaeboard.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class PostController {
     }
 
     @DeleteMapping("/api/posts/{id}")
-    public ResponseEntity<MsgResponseDto> deleteMemo(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<StatusCodeDto> deleteMemo(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.deletePost(id, userDetails.getUser());
     }
 }

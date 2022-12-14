@@ -28,11 +28,11 @@ public class Post extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)// 글 하나가 삭제되면 맵핑되어있는 쪽 테이블이름!!! 글도 삭제되는 cascade 연속성 전이 속성
+    @OneToMany(mappedBy = "post" ,cascade = CascadeType.REMOVE)// 글 하나가 삭제되면 맵핑되어있는 쪽 테이블이름!!! 글도 삭제되는 cascade 연속성 전이 속성
     @OrderBy("createdAt desc")// 엔티티단에서 정렬
     private List<Comment> commentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)
     private List<PostLike> postLikes = new ArrayList<>();
 
     public Post(PostRequestDto requestDto, User user) {
@@ -40,7 +40,6 @@ public class Post extends Timestamped {
         this.content = requestDto.getContent();
         this.title = requestDto.getTitle();
         this.user = user;
-
     }
 
     public void update(PostRequestDto requestDto) {

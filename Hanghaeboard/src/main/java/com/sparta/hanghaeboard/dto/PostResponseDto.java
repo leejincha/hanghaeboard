@@ -18,7 +18,7 @@ public class PostResponseDto {
     private LocalDateTime modifiedAt;
     private LocalDateTime createdAt;
     private int postLikesCount;
-    private List<CommentDto> commentList = new ArrayList<>();
+    private List<CommentResponseDto> commentList = new ArrayList<>();
 
 
     public PostResponseDto(Post post) {
@@ -31,7 +31,7 @@ public class PostResponseDto {
         this.postLikesCount = post.getPostLikes().size();
     }
 
-    public PostResponseDto(Post post, List<CommentDto> commentList) {
+    public PostResponseDto(Post post, List<CommentResponseDto> commentList) { //오버로딩
         this.id = post.getId();
         this.username = post.getUsername();
         this.content = post.getContent();

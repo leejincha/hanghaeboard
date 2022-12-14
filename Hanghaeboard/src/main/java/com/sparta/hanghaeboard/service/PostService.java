@@ -1,9 +1,9 @@
 package com.sparta.hanghaeboard.service;
 
-import com.sparta.hanghaeboard.dto.CommentDto;
-import com.sparta.hanghaeboard.dto.MsgResponseDto;
+import com.sparta.hanghaeboard.dto.CommentResponseDto;
 import com.sparta.hanghaeboard.dto.PostRequestDto;
 import com.sparta.hanghaeboard.dto.PostResponseDto;
+import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import com.sparta.hanghaeboard.entity.Comment;
 import com.sparta.hanghaeboard.entity.Post;
 import com.sparta.hanghaeboard.entity.User;
@@ -35,9 +35,9 @@ public class PostService {
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         List<PostResponseDto> postResponseDto = new ArrayList<>();
         for (Post post : postList) {
-            List<CommentDto> commentList = new ArrayList<>();
+            List<CommentResponseDto> commentList = new ArrayList<>(); //Post안에 코멘트 리스트 넣어서 순환참조 방지하기.
             for (Comment comment : post.getCommentList()) {
-                commentList.add(new CommentDto(comment));
+                commentList.add(new CommentResponseDto(comment));
             }
             PostResponseDto postDto = new PostResponseDto(post, commentList);
             postResponseDto.add(postDto);
@@ -50,9 +50,9 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new RequestException(ErrorCode.게시글이_존재하지_않습니다_400)
         );
-        List<CommentDto> commentList = new ArrayList<>();
+        List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment comment : post.getCommentList()) {
-            commentList.add(new CommentDto(comment));
+            commentList.add(new CommentResponseDto(comment));
         }
         return new PostResponseDto(post, commentList);
     }
@@ -76,7 +76,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<MsgResponseDto> deletePost(Long id, User user) {
+    public ResponseEntity<StatusCodeDto> deletePost(Long id, User user) {
         Post post;
         //유저의 권한이 admin과 같으면 모든 데이터 삭제 가능
         if (user.getRole().equals(UserRoleEnum.ADMIN)) {
@@ -90,6 +90,6 @@ public class PostService {
         }
         postRepository.delete(post);
 
-        return ResponseEntity.ok(new MsgResponseDto(HttpStatus.OK.value(), "게시글 삭제 성공"));
+        return ResponseEntity.ok(new StatusCodeDto(HttpStatus.OK.value(), "게시글 삭제 성공"));
     }
 }

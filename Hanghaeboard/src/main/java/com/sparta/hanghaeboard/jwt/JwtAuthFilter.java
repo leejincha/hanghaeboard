@@ -1,7 +1,7 @@
 package com.sparta.hanghaeboard.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.hanghaeboard.dto.SecurityExceptionDto;
+import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,11 +51,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.setStatus(statusCode);
         response.setContentType("application/json");
         try {
-            String json = new ObjectMapper().writeValueAsString(new SecurityExceptionDto(statusCode, msg));
+            String json = new ObjectMapper().writeValueAsString(new StatusCodeDto(statusCode, msg));
             response.getWriter().write(json);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
-
 }

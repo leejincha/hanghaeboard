@@ -24,14 +24,16 @@ public class Comment extends Timestamped{
     private String comment;
 
 //    @JsonIgnore//순환 참조 = 무한 루프, 제이슨으로 파싱하는 것을 무시하고 FK만 들고오도록 함.
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POST_ID", nullable = false)
     private Post post;
-//    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name ="user_id")
     private User user;
-    @OneToMany(mappedBy = "comment")
+
+    @OneToMany(mappedBy = "comment",cascade = CascadeType.REMOVE)
     private List<CommentLike> commentLikes = new ArrayList<>();
 
     @Builder

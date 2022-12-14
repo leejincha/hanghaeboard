@@ -28,7 +28,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Post> post;
 
-
     public User(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
