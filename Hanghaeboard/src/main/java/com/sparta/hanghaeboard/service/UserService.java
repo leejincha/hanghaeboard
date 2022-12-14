@@ -2,6 +2,7 @@ package com.sparta.hanghaeboard.service;
 
 import com.sparta.hanghaeboard.dto.LoginRequestDto;
 import com.sparta.hanghaeboard.dto.SignupRequestDto;
+import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import com.sparta.hanghaeboard.entity.User;
 import com.sparta.hanghaeboard.entity.UserRoleEnum;
 import com.sparta.hanghaeboard.jwt.JwtUtil;
@@ -9,6 +10,8 @@ import com.sparta.hanghaeboard.repository.UserRepository;
 import com.sparta.hanghaeboard.util.ErrorCode;
 import com.sparta.hanghaeboard.util.RequestException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,5 +69,22 @@ public class UserService {
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
+    }
+
+    @Transactional
+    public ResponseEntity<StatusCodeDto> deleteUser(Long id, User user) {
+        //유저의 권한이 admin과 같으면 모든 데이터 삭제 가능
+        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+            user = userRepository.findById(id).orElseThrow(
+                    () -> new RequestException(ErrorCode. 관리자_비밀번호가_일치하지_않습니다_400));
+        } else {
+            //유저의 권한이 admin이 아니면 아이디가 같은 유저만 삭제 가능
+            user = userRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
+                    () -> new RequestException(ErrorCode.회원을_찾을_수_없습니다_400)
+            );
+        }
+        userRepository.delete(user);
+
+        return ResponseEntity.ok(new StatusCodeDto(HttpStatus.OK.value(), "회원 탈퇴 성공"));
     }
 }

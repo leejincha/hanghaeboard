@@ -25,7 +25,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     private List<Post> post;
 
     public User(String username, String password, UserRoleEnum role) {
