@@ -23,8 +23,8 @@ public class PostController {
     }
 
     @GetMapping("/api/posts")
-    public List<PostResponseDto> getListPosts() {
-        return postService.getListPosts();
+    public List<PostResponseDto> getListPost() {
+        return postService.getListPost();
     }
 
     @GetMapping("/api/posts/{id}")
@@ -38,7 +38,7 @@ public class PostController {
     }
 
     @DeleteMapping("/api/posts/{id}")
-    public ResponseEntity<StatusCodeDto> deleteMemo(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<StatusCodeDto> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.deletePost(id, userDetails.getUser());
     }
 }

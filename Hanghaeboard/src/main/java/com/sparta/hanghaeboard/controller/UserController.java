@@ -1,8 +1,8 @@
 package com.sparta.hanghaeboard.controller;
 
 import com.sparta.hanghaeboard.dto.LoginRequestDto;
-import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import com.sparta.hanghaeboard.dto.SignupRequestDto;
+import com.sparta.hanghaeboard.dto.StatusCodeDto;
 import com.sparta.hanghaeboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,4 +36,9 @@ public class UserController {
         userService.login(loginRequestDto, response);
         return ResponseEntity.ok(new StatusCodeDto(HttpStatus.OK.value(),"로그인 성공"));
     }
+
+//    @DeleteMapping("/delete/{id}")
+//    public ResponseEntity<StatusCodeDto> deleteUser(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return userService.deleteUser(id, userDetails.getUser());
+//    }
 }

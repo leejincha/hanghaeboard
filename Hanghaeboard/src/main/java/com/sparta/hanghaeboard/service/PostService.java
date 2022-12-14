@@ -31,7 +31,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getListPosts() {
+    public List<PostResponseDto> getListPost() {
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         List<PostResponseDto> postResponseDto = new ArrayList<>();
         for (Post post : postList) {
